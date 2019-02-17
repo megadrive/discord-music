@@ -6,7 +6,8 @@
     "scripts": {
         "watch": "tsc --watch -p tsconfig.json",
         "build": "tsc",
-        "test": "jest"
+        "test": "jest",
+        "start": "node dist/run.js"
     },
     "author": "andy <a.simeon@gmail.com> (https://github.com/megadrive)",
     "license": "ISC",
@@ -24,5 +25,15 @@
         "hooks": {
             "pre-commit": "pretty-quick --staged"
         }
+    },
+    "dependencies": {
+        "@keyv/sqlite": "^2.0.0",
+        "@types/keyv": "^3.1.0",
+        "discord.js": "^11.4.2",
+        "dotenv": "^6.2.0",
+        "ffmpeg-binaries": "^4.0.0",
+        "keyv": "^3.1.0",
+        "opusscript": "0.0.6",
+        "simple-youtube-api": "^5.1.1"
     }
 }
