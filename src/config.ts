@@ -2,7 +2,6 @@
 
 import Keyv from "keyv";
 const dotenv = require("dotenv");
-dotenv.config();
 
 interface IConfigOptions {
     [x: string]: any;
@@ -10,7 +9,7 @@ interface IConfigOptions {
 
 export class Config {
     props: Keyv;
-    prefix: string;
+    prefix: string = "!";
 
     constructor(options?: IConfigOptions[]) {
         this.props = new Keyv("sqlite://configuration.sqlite");
@@ -24,13 +23,19 @@ export class Config {
     }
 
     importFromEnv() {
-        const envVars = ["YOUTUBE_API_KEY", "DISCORD_TOKEN"];
+        const defaultVars = Object.keys(process.env);
+        dotenv.config();
 
         Object.keys(process.env).map(env => {
-            if (envVars.includes(env)) {
+            if (!defaultVars.includes(env)) {
                 this.props.set(env, process.env[env]);
                 console.log(`Set config var ${env}.`);
             }
+        });
+
+        // special case for prefix, set it locally.
+        this.props.get("PREFIX").then(prefix => {
+            if (prefix) this.prefix = prefix;
         });
     }
 
@@ -39,7 +44,11 @@ export class Config {
             const promises = keys.map(key => this.props.get(key));
             Promise.all(promises)
                 .then(fetched => {
-                    resolve(fetched);
+                    let rv: IConfigOptions = {};
+                    fetched.forEach((value, index) => {
+                        rv[keys[index]] = value;
+                    });
+                    resolve(rv);
                 })
                 .catch(reject);
         });

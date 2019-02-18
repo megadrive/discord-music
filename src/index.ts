@@ -3,23 +3,26 @@
 import { Config } from "./config";
 import { Player } from "./player";
 import { readFileSync } from "fs";
-import { DiscordMusic } from "./discord";
+import { DiscordMusic, IChannelsOptions, ITokenOptions } from "./discord";
 
 const config = new Config();
 config.importFromEnv();
 
-const token = readFileSync("./token", "utf8");
-if (!token) {
-    console.error("need a token");
-    process.exit(1);
-}
-const tokensArray = JSON.parse('["' + token.split(",").join('","') + '"]');
+(async () => {
+    const env: any = await config.get([
+        "YOUTUBE_API_KEY",
+        "DISCORD_TOKEN",
+        "TEXT_CHANNEL",
+        "VOICE_CHANNEL",
+    ]);
+    const tokens: ITokenOptions = {
+        youtube: env.YOUTUBE_API_KEY,
+        discord: env.DISCORD_TOKEN,
+    };
+    const channels: IChannelsOptions = {
+        textChannelId: env.TEXT_CHANNEL,
+        voiceChannelId: env.VOICE_CHANNEL,
+    };
 
-console.log(tokensArray);
-
-const tokens = {
-    youtube: tokensArray[0],
-    discord: tokensArray[1],
-};
-
-const music: DiscordMusic = new DiscordMusic(tokens);
+    const music: DiscordMusic = new DiscordMusic(tokens, channels, config);
+})();

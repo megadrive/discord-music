@@ -9,7 +9,6 @@ const YouTube = require("simple-youtube-api");
 
 interface IPlayerOptions {
     config: Config;
-    prefix?: string;
 }
 
 export class Player extends EventEmitter {
@@ -22,14 +21,7 @@ export class Player extends EventEmitter {
         super();
 
         this.options = options;
-
         this.config = options.config;
-
-        if (!options.prefix) {
-            this.options.prefix = "!";
-        } else {
-            this.options.prefix = options.prefix;
-        }
 
         this.config.props
             .get("YOUTUBE_TOKEN_API")
